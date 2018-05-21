@@ -93,11 +93,10 @@ constraint f_id_supply foreign key (id_supply) references t_supply(id_supply),
 num number(6),
 id_ware number not null,
 constraint f_id_ware foreign key (id_ware) references t_ware(id_ware),
-qty number(6),
-price number(8,2),
+qty number(6) not null,
+price number(8,2) not null,
 sum number(14,2),
 nds number(14,2));
-
 
 
 create table t_sale_str

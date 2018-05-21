@@ -3,15 +3,31 @@
 --“риггер дл€ строки поставки, автоматически вычисл€ющий сумму и Ќƒ— строки. —ледующий шаг Ч вычисление в триггере суммы и Ќƒ— заголовка поставки по изменению в строках.
 
 create or replace trigger sum_nds_for_supply_str
-before insert or update on t_supply_str
-for each row
-begin
-if :new.price is null or :new.qty is null
-then :new.sum:=0;
- :new.nds:=0;
-else :new.sum:=:new.qty*:new.price;
-:new.nds:=:new.sum*20/100;
-end if;
+before insert 
+  OR
+  update on t_supply_str for each row 
+    BEGIN IF :new.price IS NULL
+  OR :new.qty                                              IS NULL THEN :new.sum:=0;
+  :new.nds                                                 :=0;
+ELSE
+  :new.sum:=:new.qty*:new.price;
+  :new.nds:=:new.sum*20/100;
+END IF;
+IF inserting THEN
+  UPDATE t_supply
+  SET SUM        =SUM+:new.sum ,
+    nds          =nds+:new.nds
+  WHERE id_supply=:new.id_supply;
+END IF;
+IF updating THEN
+  if :old.sum>:new.sum
+  then 
+    UPDATE t_supply
+    SET SUM        =SUM-(:old.sum-:new.sum) ,
+      nds          =nds-(:old.nds-:new.nds)
+    WHERE id_supply=:new.id_supply;
+  end if;
+   END IF;
 
 
 end sum_nds_for_supply_str;

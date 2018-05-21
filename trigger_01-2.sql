@@ -19,3 +19,9 @@ CREATE OR REPLACE TRIGGER sum_nds_for_supply before
     END IF;
   end sum_nds_for_supply;
   /
+  
+  
+  
+  
+  
+  ---End

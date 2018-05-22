@@ -132,4 +132,51 @@ select ID_DEPT, SUM(SUM)  from T_CLIENT C join T_SALE S on C.ID_CLIENT=S.ID_CLIE
 
 
 
+(select D.ID_DEPT
+from t_dept d)
 
+
+(;
+select D2.ID_DEPT
+from t_dept d2
+start with D2.IDselect D2.ID_DEPT
+from t_dept d2
+start with D2.ID_PARENT is null
+connect by prior D2.ID_DEPT=D2.ID_PARENT;
+_PARENT
+connect by prior d2.ID_DEPT=d2.ID_PARENT;
+
+
+) from t_dept d
+
+
+
+
+select ID_DEPT,ID_PARENT from  T_DEPT D2
+connect by prior D2.ID_DEPT=D2.ID_PARENT;
+
+
+
+with R(ID_DEPT, ID_PARENT)
+as (select ID_DEPT,ID_PARENT from T_DEPT
+union all
+select ID_DEPT,ID_PARENT from T_DEPT,R
+start with R._ID_DEPT
+connect by r.id_dept=id_parent)
+select * from r;
+
+
+
+with pairs as
+(
+    select ID_DEPT as a, ID_DEPT as b from T_DEPT
+
+    UNION ALL
+
+    select pairs.a as a, T_DEPT.id as b
+    from T_DEPT, PAIRS
+    where T_DEPT.id_parent = pairs.b
+)
+select *
+from T_DEPT, PAIRS
+where pairs.a = 1 and pairs.b = T_DEPT.id_dept

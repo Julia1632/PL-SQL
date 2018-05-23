@@ -46,14 +46,34 @@ trigger T_HISTORY_REST_ADD after
 
 create or replace trigger T_T_HISTORY_REST_DEL
 after
-  DELETe on T_SUPPLY_STR for each row 
+  delete on T_SUPPLY_STR for each row 
+  declare M_DT T_SUPPLY.DT%type;
+  m_dt_end t_rest_hist.dt_end%type;
   begin
+   select DT into M_DT from T_SUPPLY where ID_SUPPLY=:old.ID_SUPPLY;
+   
+   select dt_end into m_dt_end from t_rest_hist where  ID_WARE=:old.ID_WARE and Dt_BEG=M_DT;
+  
   null;
   update T_REST set QTY=QTY-:old.QTY
   where id_ware=:old.id_ware;
+  
+  if m_dt_end is null
+  then delete from T_REST_HIST where ID_WARE=:old.ID_WARE and Dt_BEG=M_DT;
+  end if;
+  
+  
   end T_T_HISTORY_REST_DEL;
   /
 
+
+select * from T_REST_HIST;
+select * from t_rest;
+
+select id_ware, lead(date
+(
+select * from T_REST_HIST where ID_WARE =:old.ID_WARE
+order by dt_beg);
 
 
 /*

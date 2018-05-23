@@ -131,52 +131,65 @@ select * from R;
 select ID_DEPT, SUM(SUM)  from T_CLIENT C join T_SALE S on C.ID_CLIENT=S.ID_CLIENT;
 
 
+select  distinct d1_id, d2_id,sum(sum) over (partition by d1_id), count(id_sale) over (partition by d1_id)  from
+(SELECT *
+FROM
+  (SELECT D1.ID_DEPT D1_ID,
+    D2.ID_DEPT D2_ID
+  FROM T_DEPT D1
+  cross join T_DEPT D2
+  ) WHeRE D2_ID IN
+  (SELECT Z.ID_DEPT
+  from T_DEPT Z
+    START WITH Z.ID_PARENT    =D1_ID
+    CONNECT BY prior z.id_dept=z.id_parent
+  ) 
+  union all
 
-(select D.ID_DEPT
-from t_dept d)
+select ID_DEPT, ID_DEPT from T_DEPT) Z1,
+(select * from T_CLIENT C join T_SALE S on C.ID_CLIENT=S.ID_CLIENT) Z2
+where D2_ID=Z2.ID_DEPT
+order by 1,2
+;
+    
+    
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    SELECT *
+FROM
+  (SELECT D1.ID_DEPT D1_ID,
+    D2.ID_DEPT D2_ID
+  FROM T_DEPT D1
+  cross join T_DEPT D2
+  ) WHeRE D2_ID IN
+  (SELECT Z.ID_DEPT
+  from T_DEPT Z
+    START WITH Z.ID_PARENT    =D1_ID
+    CONNECT BY prior z.id_dept=z.id_parent
+  ) 
+  union all
+
+select ID_DEPT, ID_DEPT from T_DEPT
+order by 1,2;
 
 
-(;
-select D2.ID_DEPT
-from t_dept d2
-start with D2.IDselect D2.ID_DEPT
-from t_dept d2
-start with D2.ID_PARENT is null
-connect by prior D2.ID_DEPT=D2.ID_PARENT;
-_PARENT
-connect by prior d2.ID_DEPT=d2.ID_PARENT;
 
-
-) from t_dept d
-
-
-
-
-select ID_DEPT,ID_PARENT from  T_DEPT D2
-connect by prior D2.ID_DEPT=D2.ID_PARENT;
-
-
-
-with R(ID_DEPT, ID_PARENT)
-as (select ID_DEPT,ID_PARENT from T_DEPT
-union all
-select ID_DEPT,ID_PARENT from T_DEPT,R
-start with R._ID_DEPT
-connect by r.id_dept=id_parent)
-select * from r;
-
-
-
-with pairs as
-(
-    select ID_DEPT as a, ID_DEPT as b from T_DEPT
-
-    UNION ALL
-
-    select pairs.a as a, T_DEPT.id as b
-    from T_DEPT, PAIRS
-    where T_DEPT.id_parent = pairs.b
-)
-select *
-from T_DEPT, PAIRS
-where pairs.a = 1 and pairs.b = T_DEPT.id_dept
+select * from T_CLIENT C join T_SALE S on C.ID_CLIENT=S.ID_CLIENT
+order by 2;

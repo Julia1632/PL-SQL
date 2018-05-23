@@ -43,6 +43,19 @@ trigger T_HISTORY_REST_ADD after
 
 /
 
+
+create or replace trigger T_T_HISTORY_REST_DEL
+after
+  DELETe on T_SUPPLY_STR for each row 
+  begin
+  null;
+  update T_REST set QTY=QTY-:old.QTY
+  where id_ware=:old.id_ware;
+  end T_T_HISTORY_REST_DEL;
+  /
+
+
+
 /*
 
 select * from t_rest;

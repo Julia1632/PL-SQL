@@ -1,0 +1,20 @@
+
+
+CREATE OR REPLACE TRIGGER T_HISTORY_REST_add AFTER
+  INSERT ON T_SUPPLY_STR FOR EACH row BEGIN merge
+  INTO T_REST P1 USING
+    ( SELECT :new.ID_WARE id , :new.QTY Q FROM DUAL
+    )
+    P2 ON (P2.id=P1.ID_WARE) WHEN matched THEN
+  UPDATE SET P1.QTY=P1.QTY+Q WHEN NOT matched THEN
+  INSERT
+    (ID_WARE,QTY
+    ) VALUES
+    (:new.ID_WARE, :new.QTY
+    );
+END T_HISTORY_REST_ADD;
+/
+
+/*
+
+select * from t_rest;

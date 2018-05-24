@@ -113,8 +113,26 @@ FROM
     insert into T_REST_HIST(ID_WARE,DT_BEG,DT_END, QTY)
      values (DEPT_REC.ID_WARE, DEPT_REC.DT_BEG,DEPT_REC.NEXT_DT_BEG-1, DEPT_REC.QTY);
      update T_REST_HIST
-     set qty=qty+DEPT_REC.QTY
-     where DT_beg=DEPT_REC.NEXT_DT_BEG and id_ware= DEPT_REC.ID_WARE;
+     set QTY=QTY+DEPT_REC.QTY
+     where DT_BEG>=DEPT_REC.NEXT_DT_BEG and ID_WARE= DEPT_REC.ID_WARE;
+     
+     else if  DEPT_REC.NEXT_DT_BEG is not null and DEPT_REC.PREVIOUS_DT_END is not null
+     then
+     
+     
+     insert into T_REST_HIST(ID_WARE,DT_BEG,DT_END, QTY)
+     values (DEPT_REC.ID_WARE, DEPT_REC.DT_BEG, DEPT_REC.PREVIOUS_dt_end, DEPT_REC.PREVIOUS_QTY+DEPT_REC.QTY);
+     
+     update T_REST_HIST
+     set DT_END=DEPT_REC.DT_beg
+     where DT_end=DEPT_REC.PREVIOUS_DT_END and ID_WARE= DEPT_REC.ID_WARE;
+     
+      update T_REST_HIST
+     set QTY=QTY+DEPT_REC.QTY
+     where DT_BEG>=DEPT_REC.NEXT_DT_BEG and ID_WARE= DEPT_REC.ID_WARE; 
+     
+     null;
+     end if;
      
      null;
     end if;

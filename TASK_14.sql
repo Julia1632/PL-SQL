@@ -1,3 +1,6 @@
+--
+-- удалить все неправильно из-за наличия статуса
+
 create or replace 
 trigger T_HISTORY_REST_ADD after
   insert on T_SUPPLY_STR for each row declare M_DT T_SUPPLY.DT%type;
@@ -37,6 +40,7 @@ trigger T_HISTORY_REST_ADD after
     INSERT into t_rest_hist (ID_WARE,DT_BEG,QTY
       ) values
       (:new.ID_WARE,M_DT,:new.QTY);
+      -- ошибка в обработке QTY
     
   END T_HISTORY_REST_ADD;
 

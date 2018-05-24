@@ -51,15 +51,21 @@ after
   m_dt_end t_rest_hist.dt_end%type;
   begin
    select DT into M_DT from T_SUPPLY where ID_SUPPLY=:old.ID_SUPPLY;
-   
    select dt_end into m_dt_end from t_rest_hist where  ID_WARE=:old.ID_WARE and Dt_BEG=M_DT;
   
-  null;
   update T_REST set QTY=QTY-:old.QTY
   where id_ware=:old.id_ware;
   
   if m_dt_end is null
-  then delete from T_REST_HIST where ID_WARE=:old.ID_WARE and Dt_BEG=M_DT;
+  then delete from T_REST_HIST where ID_WARE=:old.ID_WARE and DT_BEG=M_DT;
+  else if M_DT_END is not null
+  then 
+  delete from T_REST_HIST where ID_WARE=:old.ID_WARE and DT_BEG=M_DT;
+  update T_REST_HIST 
+  set DT_END=m_dt_end
+  where ID_WARE=:old.ID_WARE and DT_end=M_DT-1;
+  
+  end if;
   end if;
   
   

@@ -97,8 +97,30 @@ FROM
  
  LOOP
       FETCH C_WEAK_RCTY into DEPT_REC;
-      DBMS_OUTPUT.PUT_LINE('45'||dept_rec.id_ware);
-      EXIT WHEN C_WEAK_RCTY%NOTFOUND;
+      EXIT when C_WEAK_RCTY%NOTFOUND;
+     DBMS_OUTPUT.PUT_LINE('1445'||dept_rec.id_ware);
+     
+     if DEPT_REC.NEXT_DT_BEG is null and DEPT_REC.PREVIOUS_DT_END is null --добавление в начало
+     then 
+     insert into T_REST_HIST(ID_WARE,DT_BEG, QTY)
+     values (DEPT_REC.ID_WARE, DEPT_REC.DT_BEG, DEPT_REC.PREVIOUS_QTY+DEPT_REC.QTY);
+     update T_REST_HIST
+     set DT_END=DEPT_REC.DT_BEG-1
+     where DT_END is null and ID_WARE= DEPT_REC.ID_WARE;
+    else if  DEPT_REC.NEXT_DT_BEG is not null and DEPT_REC.PREVIOUS_DT_END is null
+    then
+    
+    insert into T_REST_HIST(ID_WARE,DT_BEG,DT_END, QTY)
+     values (DEPT_REC.ID_WARE, DEPT_REC.DT_BEG,DEPT_REC.NEXT_DT_BEG-1, DEPT_REC.QTY);
+     update T_REST_HIST
+     set qty=qty+DEPT_REC.QTY
+     where DT_beg=DEPT_REC.NEXT_DT_BEG and id_ware= DEPT_REC.ID_WARE;
+     
+     null;
+    end if;
+     end if;
+     
+     
      
    END LOOP;
  
@@ -107,10 +129,4 @@ FROM
 
 end;
 /
- 
- 
- begin 
- FINDCOURSE;
- end;
- /
  
